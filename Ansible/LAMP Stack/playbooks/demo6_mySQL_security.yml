@@ -1,0 +1,19 @@
+---
+- hosts: db
+  become: yes
+  tasks:
+    - name: Remove anonymouse users
+      mysql_user:
+        name: ""
+        state: absent
+        login_user: root
+        login_password: admin123
+        host_all: yes
+    - name: Remove the test database
+      mysql_db:
+        db: test
+        state: absent
+        login_user: root
+        login_password: admin123
+    
+        

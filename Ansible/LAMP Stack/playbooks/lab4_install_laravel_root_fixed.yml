@@ -1,0 +1,30 @@
+---
+- hosts: webservers
+  become: yes
+  handlers: 
+    - name: restart Apache
+      service: name=apache2 state=restarted
+  tasks:   
+    - name: Remove the project directory if it already exists
+      file:
+        path: /var/www/html/blog
+        state: absent
+    - name: Install Laravel
+      composer:
+       command: create-project
+       arguments: laravel/laravel blog 
+       working_dir: /var/www/html
+       prefer_dist: yes
+    - name: Ensure that the storage directory has the 777 permissions
+      file:
+        path: /var/www/html/blog/storage
+        state: directory
+        mode: 0777
+        recurse: true
+    - name: Configure Apache to point to /var/www/html/blog/public as the web root
+      lineinfile:
+        path: /etc/apache2/sites-available/000-default.conf
+        # Make sure that you match the line exactly as it is written. So if it has a slash at the end like html/ you must match it
+        regexp: 'DocumentRoot /var/www/html'
+        line: 'DocumentRoot /var/www/html/blog/public'
+      notify: restart Apache

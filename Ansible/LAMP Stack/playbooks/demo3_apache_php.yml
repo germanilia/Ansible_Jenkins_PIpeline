@@ -1,0 +1,40 @@
+---
+- hosts: webservers
+  become: yes
+  handlers: 
+    - name: Restart Apache
+      service: name=apache2 state=restarted
+  tasks:
+    - name: Install apache2
+      apt: 
+        name: apache2
+        update_cache: yes
+        state: present
+    - name: Ensure Apache2 Is Installed And Started On Boot
+      service:
+        name: apache2
+        state: started
+        enabled: yes
+    - name: Add PHP 7.1 repository
+      apt_repository:
+        repo: 'ppa:ondrej/php'
+        state: present
+    - name: Install PHP 7 and the required packages
+      apt: name={{ item }} state=present update_cache=yes
+      with_items:
+        - php7.1 
+        - php7.1-xml 
+        - php7.1-mbstring 
+        - php7.1-mysql 
+        - php7.1-json 
+        - php7.1-curl 
+        - php7.1-cli 
+        - php7.1-common 
+        - php7.1-mcrypt 
+        - php7.1-gd 
+        - libapache2-mod-php7.1 
+        - php7.1-zip
+      notify: Restart Apache
+      
+
+

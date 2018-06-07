@@ -1,0 +1,13 @@
+---
+- hosts: webservers
+  become: yes
+  tasks:
+    - name: Upload the environment file to inform Laravel about the database location
+      copy:
+        src: files/.env
+        dest: /var/www/html/blog/.env
+
+    - name: Upload the default route file to test database connectivity
+      copy:
+        src: files/web.php
+        dest: /var/www/html/blog/routes/web.php

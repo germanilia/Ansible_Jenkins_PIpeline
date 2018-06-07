@@ -1,0 +1,30 @@
+---
+- hosts: db
+  become: yes
+  tasks:
+    - name: Set DB root password
+      debconf: 
+        name: mysql-server
+        question: mysql-server/root_password
+        value: admin123
+        vtype: password
+    - name: Repeat root password
+      debconf: 
+        name: mysql-server
+        question: mysql-server/root_password_again
+        value: admin123
+        vtype: password
+    - name: Install MySQL packages
+      apt: 
+        name: "{{ item }}"
+        state: present
+        update_cache: yes
+      with_items:
+        - mysql-server
+        - mysql-client
+        - python-mysqldb
+    - name: Ensure MySQL started and enabled
+      service: 
+        name: mysql
+        state: started
+        enabled: yes

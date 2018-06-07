@@ -1,0 +1,15 @@
+---
+- hosts: webservers
+  become: yes
+  tasks:
+    - name: Install apache2
+      apt: 
+        name: curl
+        update_cache: yes
+        state: present
+    - name: Install Composer
+      shell: curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+      args:
+       creates: /usr/local/bin/composer
+
+

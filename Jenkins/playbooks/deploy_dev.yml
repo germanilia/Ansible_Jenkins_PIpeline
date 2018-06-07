@@ -1,0 +1,38 @@
+---
+- hosts: dev
+  become: yes
+  tasks:
+    - name: Install NPM Package
+      apt:
+        name: npm
+        update_cache: yes
+        state: present
+    - name: Install Unzip Package
+      apt:
+        name: unzip
+        update_cache: yes
+        state: present
+    - name: Upload Zip file
+      copy:
+        src: files/nodejs-demoapp.zip
+        dest: /tmp
+    - name: Unarchive Zip file
+      unarchive:
+        src: /tmp/nodejs-demoapp.zip
+        dest: /tmp
+        remote_src: yes
+    
+    - name: Install "pm2" node.js package.
+      npm:
+        name: pm2
+        global: yes
+    
+    - name: Install packages based on package.json
+      shell: npm i
+      args:
+        chdir: /tmp
+    
+    - name: Run app using pm2
+      shell: pm2 start server.js -f
+      args:
+        chdir: /tmp

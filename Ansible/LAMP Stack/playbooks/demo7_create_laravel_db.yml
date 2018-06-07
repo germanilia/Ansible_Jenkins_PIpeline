@@ -1,0 +1,19 @@
+---
+- hosts: db
+  become: yes
+  tasks:   
+    - name: Create db for laravel
+      mysql_db:
+        db: blog
+        state: present
+        login_user: root
+        login_password: admin123
+    - name: Create the db user
+      mysql_user:
+        name: laravel
+        password: laravel
+        priv: 'blog.*:ALL,GRANT'
+        host: '%'
+        state: present
+        login_user: root
+        login_password: admin123

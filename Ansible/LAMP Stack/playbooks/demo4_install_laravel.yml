@@ -1,0 +1,19 @@
+---
+- hosts: webservers
+  become: yes
+  handlers: 
+    - name: Restart Apache
+      service: name=apache2 state=restarted
+  tasks:   
+    - name: Install Laravel
+      composer:
+       command: create-project
+       arguments: laravel/laravel blog 
+       working_dir: /var/www/html
+       prefer_dist: yes
+    - name: Ensure that the storage directory has the 777 permissions
+      file:
+        path: /var/www/html/blog/storage
+        state: directory
+        mode: 0777
+        recurse: true

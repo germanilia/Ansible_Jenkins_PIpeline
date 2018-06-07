@@ -1,0 +1,18 @@
+---
+- hosts: db
+  become: yes
+  handlers:
+    - name: restart mysql
+      service: name=mysql state=restarted
+
+  tasks:
+    - name: Allow mysql remote connections
+      lineinfile:
+        path: /etc/mysql/mysql.conf.d/mysqld.cnf
+        regexp: 'bind-address\s*='
+        line: 'bind-address = *'
+      notify: restart mysql
+
+
+    
+        

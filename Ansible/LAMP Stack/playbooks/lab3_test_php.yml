@@ -1,0 +1,8 @@
+---
+- hosts: webservers
+  become: yes
+  tasks:
+    - name: Copy PHP file to apache server
+      copy:
+        src: files/test.php
+        dest: /var/www/html

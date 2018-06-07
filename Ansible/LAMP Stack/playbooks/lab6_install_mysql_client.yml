@@ -1,0 +1,8 @@
+---
+- hosts: webservers
+  become: yes
+  tasks:   
+    - name: Install MySQL client
+      apt: name=mysql-client state=present
+    
+      

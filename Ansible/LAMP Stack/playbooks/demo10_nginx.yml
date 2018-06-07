@@ -1,0 +1,30 @@
+- hosts: nginx
+  become: yes
+  handlers:
+    - name: restart nginx
+      service:
+        name=nginx state=restarted
+  tasks:
+    - name: Install nginx
+      apt: 
+        name: nginx
+        state: present
+        update_cache: yes
+
+    - name: Start and enable nginx
+      service:
+        name: nginx
+        state: started
+        enabled: yes
+
+    - name: Upload the configuration file to nginx
+      copy:
+        src: files/loadbalancer.conf
+        dest: /etc/nginx/conf.d/loadbalancer.conf
+      notify: restart nginx
+
+    - name: Delete the default configuration
+      file:
+        path: /etc/nginx/sites-enabled/default
+        state: absent
+      notify: restart nginx

@@ -1,0 +1,20 @@
+---
+- hosts: db
+  become: yes
+  handlers:
+    - name: restart mysql
+      service: name=mysql state=restarted
+  tasks:
+  - name: Upload the SQL script
+    copy:
+      src: files/create_table.sql
+      dest: /tmp/create_table.sql
+  - name: Create the database and the table
+    mysql_db:
+      name: blog
+      state: import
+      target: /tmp/create_table.sql
+      login_user: laravel
+      login_password: laravel
+
+
